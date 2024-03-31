@@ -4,6 +4,8 @@ const userRouter = require("./routes/userRoutes");
 const inventoryRouter = require("./routes/inventoryRoutes");
 const medicineRouter = require("./routes/medicineRoutes");
 const groupRouter = require("./routes/groupsRoutes");
+const invoiceRouter = require("./routes/invoiceRoutes");
+const errorMiddleware = require("./middlewares/error");
 
 const app = express();
 
@@ -13,6 +15,9 @@ app.use(cookieParser());
 
 //using routes
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/invoice", invoiceRouter);
+
+app.use(errorMiddleware);
 
 app.use("/api/v1/inventory", inventoryRouter)
 
