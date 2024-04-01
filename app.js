@@ -1,6 +1,12 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const userRouter = require("./routes/userRoutes");
+const inventoryRouter = require("./routes/inventoryRoutes");
+const medicineRouter = require("./routes/medicineRoutes");
+const groupRouter = require("./routes/groupsRoutes");
+const invoiceRouter = require("./routes/invoiceRoutes");
+const orderRouter = require("./routes/orderRoutes");
+const errorMiddleware = require("./middlewares/error");
 
 const app = express();
 
@@ -10,5 +16,13 @@ app.use(cookieParser());
 
 //using routes
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/invoice", invoiceRouter);
+app.use("/api/v1/inventory", inventoryRouter);
+app.use("/api/v1/medicine", medicineRouter);
+app.use("/api/v1/groups", groupRouter);
+app.use("/api/v1/order", orderRouter);
+
+//using error middleware
+app.use(errorMiddleware);
 
 module.exports = app;
