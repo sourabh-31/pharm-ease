@@ -35,6 +35,35 @@ const invoiceSchema = new mongoose.Schema({
       required: true,
     },
   },
+  medicineInfo: [
+    {
+      medicineName: {
+        type: String,
+        required: true,
+      },
+      medicineId: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Medicine",
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      },
+      rate: {
+        type: Number,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+      expireDate: {
+        type: Date,
+        required: true,
+      },
+    },
+  ],
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
@@ -42,6 +71,10 @@ const invoiceSchema = new mongoose.Schema({
   },
   paidAt: {
     type: Date,
+    required: true,
+  },
+  totalBill: {
+    type: Number,
     required: true,
   },
 });

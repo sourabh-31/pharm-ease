@@ -4,12 +4,14 @@ const ErrorHandler = require("../utils/errorhandler");
 
 //create Invoice
 exports.createInvoice = catchAsyncErrors(async (req, res, next) => {
-  const { customerInfo } = req.body;
+  const { customerInfo, medicineInfo, totalBill } = req.body;
 
   const invoice = await Invoice.create({
     customerInfo,
+    medicineInfo,
     user: req.user.id,
     paidAt: Date.now(),
+    totalBill,
   });
 
   res.status(200).json({

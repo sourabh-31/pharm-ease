@@ -5,18 +5,18 @@ const {
   updateMedicine,
   deleteMedicine,
 } = require("../controllers/medicineController");
-const { isAuthenticated } = require("../middleware/auth");
+const { isAuthenticated } = require("../middlewares/auth");
 
 const router = express.Router();
 
 router.post("/add", isAuthenticated, addMedicine);
 
-router.get("/get/:_id", isAuthenticated, getMedicine);
+router.get("/get/:id", isAuthenticated, getMedicine);
 
 //router.get("/search/:_id", isAuthenticated, searchMedicine);
 
-router.put("/update/:_id", isAuthenticated, updateMedicine);
+router.put("/update/:id", isAuthenticated, updateMedicine);
 
-router.delete("/delete/:_id", isAuthenticated, deleteMedicine);
+router.delete("/delete/:id", isAuthenticated, deleteMedicine);
 
 module.exports = router;

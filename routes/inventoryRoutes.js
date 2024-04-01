@@ -4,7 +4,7 @@ const {
   getShortageMedicines,
   getExpiredMedicines,
 } = require("../controllers/inventoryController");
-const { isAuthenticated } = require("../middleware/auth");
+const { isAuthenticated } = require("../middlewares/auth");
 
 const router = express.Router();
 

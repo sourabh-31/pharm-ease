@@ -6,7 +6,7 @@ const {
   updateGroup,
   deleteGroup,
 } = require("../controllers/groupController");
-const { isAuthenticated } = require("../middleware/auth");
+const { isAuthenticated } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -14,10 +14,10 @@ router.post("/newGroup", isAuthenticated, createGroup);
 
 router.get("/all", isAuthenticated, getAllGroups);
 
-router.get("/get/:_id", isAuthenticated, getGroup);
+router.get("/get/:id", isAuthenticated, getGroup);
 
-router.put("/update/:_id", isAuthenticated, updateGroup);
+router.put("/update/:id", isAuthenticated, updateGroup);
 
-router.delete("/delete/:_id", isAuthenticated, deleteGroup);
+router.delete("/delete/:id", isAuthenticated, deleteGroup);
 
 module.exports = router;
