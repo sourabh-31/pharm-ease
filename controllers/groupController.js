@@ -21,8 +21,12 @@ exports.createGroup = async (req, res, next) => {
 
 exports.getAllGroups = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = process.env.PAGE_SIZE;
+    const skip = (page - 1) * pageSize;
     const projection = { __v: 0, medicines: 0, userId: 0 };
-    const group = await Group.find({ userId: req.user.id }, projection);
+    const group = await Group.find({ userId: req.user.id }, projection).skip(skip)
+      .limit(pageSize);
     res.status(200).json({ group });
   } catch (err) {
     res.status(400).json({
