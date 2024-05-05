@@ -1,23 +1,23 @@
 const express = require("express");
 const {
-  createGroup,
   getAllGroups,
   getGroup,
   updateGroup,
   deleteGroup,
+  createGroupAndAddMedicines,
 } = require("../controllers/groupController");
 const { isAuthenticated } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post("/newGroup", isAuthenticated, createGroup);
+router.post("/add", createGroupAndAddMedicines);
 
-router.get("/all", isAuthenticated, getAllGroups);
+router.get("/all", getAllGroups);
 
-router.get("/get/:id", isAuthenticated, getGroup);
+router.get("/get/:id", getGroup);
 
-router.put("/update/:id", isAuthenticated, updateGroup);
+router.delete("/delete/:id", deleteGroup);
 
-router.delete("/delete/:id", isAuthenticated, deleteGroup);
+router.put("/update/:id", updateGroup);
 
 module.exports = router;

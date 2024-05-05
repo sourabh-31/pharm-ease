@@ -4,15 +4,9 @@ const ErrorHandler = require("../utils/errorhandler");
 
 //create Invoice
 exports.createInvoice = catchAsyncErrors(async (req, res, next) => {
-  const { customerInfo, medicineInfo, totalBill } = req.body;
+  const invoiceData = req.body;
 
-  const invoice = await Invoice.create({
-    customerInfo,
-    medicineInfo,
-    user: req.user.id,
-    paidAt: Date.now(),
-    totalBill,
-  });
+  const invoice = await Invoice.create(invoiceData);
 
   res.status(200).json({
     invoice,
@@ -38,12 +32,9 @@ exports.getSingleInvoice = catchAsyncErrors(async (req, res, next) => {
 //get all invoice for respected logged in user
 
 exports.getMyInvoices = catchAsyncErrors(async (req, res, next) => {
-  const invoices = await Invoice.find({ user: req.user.id });
+  const invoices = await Invoice.find();
 
-  res.status(200).json({
-    success: true,
-    invoices,
-  });
+  res.status(200).json(invoices);
 });
 
 //delete invoice

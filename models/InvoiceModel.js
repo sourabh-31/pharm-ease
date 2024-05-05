@@ -1,82 +1,55 @@
 const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema({
-  customerInfo: {
-    name: {
-      type: String,
-      required: true,
-    },
-    phone: {
-      type: Number,
-      required: true,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
-    gender: {
-      type: String,
-      required: true,
-    },
-    doctorName: {
-      type: String,
-      required: true,
-    },
-    cashierName: {
-      type: String,
-      required: true,
-    },
-    pincode: {
-      type: Number,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-    },
+  // user: {
+  //   type: mongoose.Schema.ObjectId,
+  //   ref: "User",
+  //   required: true,
+  // },
+  billNo: {
+    type: String,
+    required: true,
   },
-  medicineInfo: [
-    {
-      medicineName: {
-        type: String,
-        required: true,
-      },
-      medicineId: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Medicine",
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-      rate: {
-        type: Number,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
-      expireDate: {
-        type: Date,
-        required: true,
-      },
-    },
-  ],
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
+  name: {
+    type: String,
+    required: true,
+  },
+  mobileNumber: {
+    type: Number,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+  sex: {
+    type: String,
+    required: true,
+  },
+  doctorName: {
+    type: String,
+    required: true,
+  },
+  doctorAddress: {
+    type: String,
     required: true,
   },
   paidAt: {
-    type: Date,
+    type: String,
     required: true,
+  },
+  modeOfPayment: {
+    type: String,
+    required: true,
+  },
+  discount: {
+    type: Number,
   },
   totalBill: {
     type: Number,
     required: true,
   },
+  medicineInfo: Array,
 });
 
 const Invoice = new mongoose.model("Invoice", invoiceSchema);

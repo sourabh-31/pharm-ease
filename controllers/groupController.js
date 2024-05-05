@@ -1,89 +1,49 @@
 const Medicine = require("../models/medicineModel");
 const Group = require("../models/groupModel");
 
-exports.createGroup = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    const groupData = { ...req.body, userId };
-    const group = await Group.create(groupData);
+exports.createGroupAndAddMedicines = async (req, res) => {
+  const { groupName, description, medicineIds } = req.body;
 
-    return res.status(201).json({
+  try {
+    const newGroup = new Group({
+      groupName: groupName,
+      description: description,
+    });
+    await newGroup.save();
+
+    const groupId = newGroup._id;
+
+    if (medicineIds && medicineIds.length > 0) {
+      const medicines = await Medicine.find({ _id: { $in: medicineIds } });
+      await Promise.all(
+        medicines.map(async (medicine) => {
+          if (!medicine.groupIds) {
+            medicine.groupIds = [];
+          }
+          medicine.groupIds.push(groupId);
+          await medicine.save();
+        })
+      );
+    }
+
+    res.status(200).json({
       success: true,
-      message: "Group created successfully",
+      message: "Group created and medicines added successfully",
     });
-  } catch (err) {
-    return res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
 exports.getAllGroups = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = process.env.PAGE_SIZE;
-    const skip = (page - 1) * pageSize;
-    const projection = { __v: 0, medicines: 0, userId: 0 };
-    const group = await Group.find({ userId: req.user.id }, projection).skip(skip)
-      .limit(pageSize);
-    res.status(200).json({ group });
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
-
-exports.getGroup = async (req, res) => {
-  try {
-    const group = await Group.findById(req.params.id);
-    if (!group)
+    const groups = await Group.find();
+    if (!groups)
       return res.status(404).json({
         success: false,
-        message: "Group not found",
+        message: "Groups not found",
       });
-
-    const { medicines, ...groupData } = group._doc;
-    res.status(200).json({
-      ...groupData,
-      medicines: await Medicine.find({ groupName: group.name }),
-    });
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
-
-exports.updateGroup = async (req, res) => {
-  try {
-    const { name: updatedGroupName, description } = req.body;
-    const group = await Group.findById(req.params.id);
-
-    if (!group) {
-      return res.status(404).json({
-        success: false,
-        message: "Group not found",
-      });
-    }
-
-    if (updatedGroupName && updatedGroupName !== group.name) {
-      await Medicine.updateMany(
-        { groupName: group.name },
-        { groupName: updatedGroupName }
-      );
-      group.name = updatedGroupName;
-    }
-    group.description = description;
-    await group.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Group updated successfully",
-    });
+    res.status(200).json(groups);
   } catch (err) {
     res.status(400).json({
       success: false,
@@ -103,6 +63,46 @@ exports.deleteGroup = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Group deleted successfully",
+    });
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.getGroup = async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id);
+    if (!group)
+      return res.status(404).json({
+        success: false,
+        message: "Group not found",
+      });
+
+    res.status(200).json(group);
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+// not used in frontend
+
+exports.updateGroup = async (req, res) => {
+  try {
+    const group = await Group.findByIdAndUpdate(req.params.id, req.body);
+    if (!group)
+      return res.status(404).json({
+        success: false,
+        message: "Group not found",
+      });
+    return res.status(200).json({
+      success: true,
+      message: "Group updated successfully",
     });
   } catch (err) {
     res.status(400).json({

@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
 
 const groupSchema = new mongoose.Schema({
-  userId: {
-    ref: "User",
-    type: mongoose.Schema.ObjectId,
-    required: true,
-  },
-  name: {
+  // userId: {
+  //   ref: "User",
+  //   type: mongoose.Schema.ObjectId,
+  //   required: true,
+  // },
+  groupName: {
     type: String,
+    required: [true, "Please enter group name"],
   },
   description: {
     type: String,
   },
-  medicines: Array,
 });
 
 const Group = new mongoose.model("Group", groupSchema);

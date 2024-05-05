@@ -10,11 +10,11 @@ const {
 
 const router = express.Router();
 
-router.post("/new", isAuthenticated, createInvoice);
+router.post("/add", createInvoice);
 
 router.get("/getInvoice/:id", isAuthenticated, getSingleInvoice);
 
-router.get("/allInvoice", isAuthenticated, getMyInvoices);
+router.get("/all", getMyInvoices);
 
 router.delete("/deleteInvoice/:id", isAuthenticated, deleteInvoice);
 
