@@ -6,17 +6,31 @@ const catchAsyncErrors = require("../middlewares/catchAsyncError");
 
 //Register new user
 
-exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  const { email, password } = req.body;
+// exports.registerUser = async (req, res, next) => {
+//   try {
 
+//   } catch (err) {
+//     res.status(400).json({ success: false, message: err.message });
+//   }
+// };
+
+exports.registerUser = catchAsyncErrors(async (req, res, next) => {
+  const userData = req.body;
+  const { email } = userData;
   const existingUser = await User.findOne({ email });
+
   if (existingUser) {
     return next(new ErrorHandler("User already exists", 400));
   }
 
-  const user = await User.create({ email, password });
+  const user = await User.create(userData);
 
-  sendCookie(user, res, "Registered Successfully", 201);
+  sendCookie(
+    user,
+    res,
+    `Welcome ${user.ownerFirstName} ${user.ownerLastName}`,
+    201
+  );
 });
 
 //Login a User
@@ -68,7 +82,6 @@ exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
   const user = req.user;
 
   res.status(200).json({
-    success: true,
     user,
   });
 });

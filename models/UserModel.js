@@ -22,30 +22,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Enter Name",
   },
-  pharmacyId: {
+  ownerFirstName: {
     type: String,
-    default: generatePharmacyId,
-    unique: true,
+    default: "Enter First Name",
   },
-  ownerName: {
+  ownerLastName: {
     type: String,
-    default: "Enter Name",
-  },
-  ownerPhone: {
-    type: Number,
-    default: "",
-  },
-  branch: {
-    type: String,
-    default: "Enter branch",
+    default: "Enter Last Name",
   },
   address: {
     type: String,
     default: "Enter address",
-  },
-  pincode: {
-    type: Number,
-    default: "",
   },
 });
 
@@ -61,16 +48,6 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
-
-function generatePharmacyId() {
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth().toString().padStart(2, "0");
-  const date = new Date().getDate().toString().padStart(2, "0");
-  const hours = new Date().getHours().toString().padStart(2, "0");
-  const minutes = new Date().getMinutes().toString().padStart(2, "0");
-  const seconds = new Date().getSeconds().toString().padStart(2, "0");
-  return `PH${year}${month}${date}${hours}${minutes}${seconds}`;
-}
 
 const User = new mongoose.model("User", userSchema);
 
