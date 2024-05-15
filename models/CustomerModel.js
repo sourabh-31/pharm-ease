@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema({
-  // userId: {
-  //   ref: "User",
-  //   type: mongoose.Schema.ObjectId,
-  //   required: true,
-  // },
+  userId: {
+    ref: "User",
+    type: mongoose.Schema.ObjectId,
+    required: true,
+  },
   name: {
     type: "String",
     required: [true, "Please Enter patient name"],

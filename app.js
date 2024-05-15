@@ -1,11 +1,9 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const userRouter = require("./routes/userRoutes");
-const inventoryRouter = require("./routes/inventoryRoutes");
 const medicineRouter = require("./routes/medicineRoutes");
 const groupRouter = require("./routes/groupsRoutes");
 const invoiceRouter = require("./routes/invoiceRoutes");
-const orderRouter = require("./routes/orderRoutes");
 const customerRouter = require("./routes/customerRoutes");
 const errorMiddleware = require("./middlewares/error");
 const cors = require("cors");
@@ -26,10 +24,8 @@ app.use(
 //using routes
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/invoice", invoiceRouter);
-app.use("/api/v1/inventory", inventoryRouter);
 app.use("/api/v1/medicine", medicineRouter);
 app.use("/api/v1/groups", groupRouter);
-app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/customer", customerRouter);
 
 //using error middleware

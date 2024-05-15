@@ -20,19 +20,31 @@ const userSchema = new mongoose.Schema({
   },
   pharmacyName: {
     type: String,
-    default: "Enter Name",
+    required: true,
   },
   ownerFirstName: {
     type: String,
-    default: "Enter First Name",
+    required: true,
   },
   ownerLastName: {
     type: String,
-    default: "Enter Last Name",
+    required: true,
   },
   address: {
     type: String,
-    default: "Enter address",
+    required: true,
+  },
+  dlNo: {
+    type: String,
+  },
+  gstNo: {
+    type: String,
+  },
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
   },
 });
 

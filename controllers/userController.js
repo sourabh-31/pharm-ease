@@ -1,18 +1,18 @@
 const User = require("../models/UserModel");
 const sendCookie = require("../utils/cookie");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncError");
+const nodemailer = require("nodemailer");
 
-//Register new user
-
-// exports.registerUser = async (req, res, next) => {
-//   try {
-
-//   } catch (err) {
-//     res.status(400).json({ success: false, message: err.message });
-//   }
-// };
+const transport = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "sourabhhaldarh@gmail.com",
+    pass: "qdly rzcu rodx hrgn",
+  },
+});
 
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   const userData = req.body;
@@ -63,11 +63,11 @@ exports.updateUser = catchAsyncErrors(async (req, res, next) => {
   }
 
   user.pharmacyName = req.body.pharmacyName || user.pharmacyName;
-  user.ownerName = req.body.ownerName || user.ownerName;
-  user.ownerPhone = req.body.ownerPhone || user.ownerPhone;
-  user.branch = req.body.branch || user.branch;
+  user.ownerFirstName = req.body.ownerFirstName || user.ownerFirstName;
+  user.ownerLastName = req.body.ownerLastName || user.ownerLastName;
   user.address = req.body.address || user.address;
-  user.pincode = req.body.pincode || user.pincode;
+  user.dlNo = req.body.dlNo || user.dlNo;
+  user.gstNo = req.body.gstNo || user.gstNo;
 
   await user.save();
 
@@ -98,4 +98,69 @@ exports.logoutUser = (req, res) => {
       success: true,
       message: "Logout successful",
     });
+};
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a reset token
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+    await user.save();
+
+    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+
+    const mailOptions = {
+      from: "sourabhhaldarh@gmail.com",
+      to: email,
+      subject: "Password Reset Request",
+      text: `You are receiving this email because you (or someone else) has requested the reset of the password for your account.\n\n
+               Please click on the following link, or paste it into your browser to complete the process:\n\n
+               ${resetUrl}\n\n
+               If you did not request this, please ignore this email and your password will remain unchanged.`,
+    };
+
+    await transport.sendMail(mailOptions);
+
+    res.json({ message: "Password reset email sent" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "Invalid or expired token" });
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };

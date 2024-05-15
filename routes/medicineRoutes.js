@@ -9,29 +9,36 @@ const {
   addMedicineToGroup,
   getExpiredMedicines,
   subtractMedicineQuantity,
+  getExpiringMedicines,
+  getShortageMedicines,
+  getEmptiedMedicines,
 } = require("../controllers/medicineController");
 const { isAuthenticated } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.post("/add", addMedicine);
+router.post("/add", isAuthenticated, addMedicine);
 
-router.post("/add/group", addMedicineToGroup);
+router.post("/add/group", isAuthenticated, addMedicineToGroup);
 
-router.get("/get/:id", getMedicine);
+router.get("/get/:id", isAuthenticated, getMedicine);
 
-router.get("/get/group/:id", getMedicinesByGroup);
+router.get("/get/group/:id", isAuthenticated, getMedicinesByGroup);
 
-router.get("/all", getAllMedicines);
+router.get("/all", isAuthenticated, getAllMedicines);
 
-router.get("/all/expired", getExpiredMedicines);
+router.get("/all/expired", isAuthenticated, getExpiredMedicines);
 
-//router.get("/search/:_id", isAuthenticated, searchMedicine);
+router.put("/update/:id", isAuthenticated, updateMedicine);
 
-router.put("/update/:id", updateMedicine);
+router.delete("/delete/:id", isAuthenticated, deleteMedicine);
 
-router.delete("/delete/:id", deleteMedicine);
+router.put("/subtract/quantity", isAuthenticated, subtractMedicineQuantity);
 
-router.put("/subtract/quantity", subtractMedicineQuantity);
+router.get("/expiring", isAuthenticated, getExpiringMedicines);
+
+router.get("/shortage", isAuthenticated, getShortageMedicines);
+
+router.get("/empty", isAuthenticated, getEmptiedMedicines);
 
 module.exports = router;

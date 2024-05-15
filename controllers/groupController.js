@@ -3,9 +3,11 @@ const Group = require("../models/groupModel");
 
 exports.createGroupAndAddMedicines = async (req, res) => {
   const { groupName, description, medicineIds } = req.body;
+  const userId = req.user.id;
 
   try {
     const newGroup = new Group({
+      userId,
       groupName: groupName,
       description: description,
     });
@@ -37,7 +39,8 @@ exports.createGroupAndAddMedicines = async (req, res) => {
 
 exports.getAllGroups = async (req, res) => {
   try {
-    const groups = await Group.find();
+    const userId = req.user.id;
+    const groups = await Group.find({ userId: userId });
     if (!groups)
       return res.status(404).json({
         success: false,

@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 
 const medicineSchema = new mongoose.Schema({
-  // userId: {
-  //   ref: "User",
-  //   type: mongoose.Schema.ObjectId,
-  //   required: true,
-  // },
+  userId: {
+    ref: "User",
+    type: mongoose.Schema.ObjectId,
+    required: true,
+  },
   medicineName: {
     type: String,
     required: [true, "Please enter medicine name"],

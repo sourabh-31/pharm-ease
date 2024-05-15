@@ -2,8 +2,8 @@ const Medicine = require("../models/medicineModel");
 
 exports.addMedicine = async (req, res, next) => {
   try {
-    // const userId = req.user.id;
-    const medicineData = { ...req.body };
+    const userId = req.user.id;
+    const medicineData = { ...req.body, userId };
     const medicine = await Medicine.create(medicineData);
 
     res.status(201).json(medicine);
@@ -46,16 +46,13 @@ exports.addMedicineToGroup = async (req, res) => {
 
 exports.getAllMedicines = async (req, res) => {
   try {
-    const today = new Date().toISOString().slice(0, 10); // Get today's date in "YYYY-MM-DD" format
+    const today = new Date().toISOString().slice(0, 10);
+    const userId = req.user.id;
+
     const medicines = await Medicine.find({
       expireDate: { $gt: today },
+      userId: userId,
     });
-
-    if (!medicines || medicines.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No non-expired medicines found" });
-    }
 
     res.status(200).json(medicines);
   } catch (err) {
@@ -83,7 +80,9 @@ exports.getMedicine = async (req, res) => {
 exports.getExpiredMedicines = async (req, res) => {
   try {
     const today = new Date();
-    const medicines = await Medicine.find().lean(); // Getting plain JavaScript objects
+    const userId = req.user.id;
+    const medicines = await Medicine.find({ userId: userId }).lean();
+
     const expiredMedicines = medicines.filter((medicine) => {
       const expireDate = new Date(medicine.expireDate);
       return expireDate <= today;
@@ -110,15 +109,6 @@ exports.getMedicinesByGroup = async (req, res) => {
       groupIds: req.params.id,
       expireDate: { $gt: today },
     });
-
-    if (!medicines || medicines.length === 0) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "No non-expired medicines found for the specified group",
-        });
-    }
 
     res.status(200).json(medicines);
   } catch (err) {
@@ -201,5 +191,53 @@ exports.subtractMedicineQuantity = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+exports.getExpiringMedicines = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const today = new Date();
+    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const expiringMedicines = await Medicine.find({
+      userId: userId,
+      expireDate: {
+        $gt: today.toISOString(),
+        $lte: nextWeek.toISOString(),
+      },
+    });
+
+    res.status(200).json(expiringMedicines);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.getShortageMedicines = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const shortageMedicines = await Medicine.find({
+      userId: userId,
+      quantity: { $lte: 10 },
+    });
+
+    res.status(200).json(shortageMedicines);
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.getEmptiedMedicines = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const emptiedMedicines = await Medicine.find({
+      userId: userId,
+      quantity: 0,
+    });
+
+    res.status(200).json(emptiedMedicines);
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
 };

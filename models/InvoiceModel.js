@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema({
-  // user: {
-  //   type: mongoose.Schema.ObjectId,
-  //   ref: "User",
-  //   required: true,
-  // },
+  userId: {
+    ref: "User",
+    type: mongoose.Schema.ObjectId,
+    required: true,
+  },
   billNo: {
     type: String,
     required: true,
@@ -43,6 +43,9 @@ const invoiceSchema = new mongoose.Schema({
     required: true,
   },
   discount: {
+    type: Number,
+  },
+  gst: {
     type: Number,
   },
   totalBill: {

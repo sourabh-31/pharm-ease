@@ -2,8 +2,10 @@ const Customer = require("../models/CustomerModel");
 
 // Create a new customer
 exports.createCustomer = async (req, res) => {
+  const userId = req.user.id;
+  const customerData = { ...req.body, userId };
   try {
-    const customer = await Customer.create(req.body);
+    const customer = await Customer.create(customerData);
     res.status(201).json({
       status: "success",
       data: {
@@ -21,7 +23,8 @@ exports.createCustomer = async (req, res) => {
 // Get all customers
 exports.getAllCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find();
+    const userId = req.user.id;
+    const customers = await Customer.find({ userId: userId });
     res.status(200).json(customers);
   } catch (err) {
     res.status(500).json({
